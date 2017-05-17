@@ -29,9 +29,10 @@ Can also collect performance data from local RailGun servers.
 
 - Install NodeJs and NPM [Download](https://nodejs.org/en/download/package-manager/)
 - Download plugin from GitHub and extract
-- Inside the plugin directory, install the required npm modules (npm install async cloudflare4)
+- Inside the plugin directory, install the required npm modules:
+    - `npm install async cloudflare4 request`
 
-Configure
+Configure by changing the following variables in: `cloudflare_monitor.js`
 
 - cfConfig
     - API Key/Email 
@@ -44,16 +45,17 @@ Configure
     - Newrelic license key and host name of the server this script will run it.
 
 We use [PM2](http://pm2.keymetrics.io) as a node process manager, which enables node.js script to run forever,
-gather logs, and to run at boot.
-i
-npm install pm2@latest -g  
-pm2 start xen_monitor.js
+gather logs, and to run at boot. PM2 assigns each process an ID, so the first (and only) process will be ID 0.
 
-pm2 stop 0  
-pm2 restart 0  
-pm2 reload 0
+    npm install pm2@latest -g  
+    pm2 start cloudflare_monitor.js
 
-To start at boot: pm2 startup, followed by pm2 save
+    pm2 stop 0  
+    pm2 restart 0  
+    pm2 reload 0
+
+To check if the script is configured and running properly, `pm2 status 0`
+To start at boot: `pm2 startup`, followed by `pm2 save`.
 
 ---
 
