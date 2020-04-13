@@ -1,6 +1,5 @@
-# Description
+# Cloudflare Plugin for Newrelic
 
-Cloudflare Plugin for Newrelic
 Fetches metrics from Cloudflare and aggregates the data, providing one dashboard that covers multiple Cloudflare sites.
 The code currently only supports Cloudflare Enterprise plans, as that is the only plan level that offers per-minute reporting.
 Can also collect performance data from local RailGun servers.
@@ -16,21 +15,18 @@ Can also collect performance data from local RailGun servers.
 - Railgun Compression
 - Railgun WAN Mpbs
 
-----
 
-# Requirements
+## Requirements
 
-- Node.JS/NPM
+- Node.js & npm
 - Cloudflare Enterprise account
 
-----
-
-# Installation
+## Installation
 
 - Install NodeJs and NPM [Download](https://nodejs.org/en/download/package-manager/)
 - Download plugin from GitHub and extract
 - Inside the plugin directory, install the required npm modules:
-    - `npm install async cloudflare4 request`
+    - `npm install`
 
 Configure by changing the following variables in: `cloudflare_monitor.js`
 
@@ -57,16 +53,11 @@ gather logs, and to run at boot. PM2 assigns each process an ID, so the first (a
 To check if the script is configured and running properly, `pm2 status 0`
 To start at boot: `pm2 startup`, followed by `pm2 save`.
 
----
-
-# License
+## License
 
 As-Is. Use at your own risk etc.
 
-----
 
-# Support
+## Support
 
 Report issues on [GitHub Issues tracker](https://github.com/mobilenations/newrelic_railgun/issues)
-
-----
