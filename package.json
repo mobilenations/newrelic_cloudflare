@@ -1,0 +1,30 @@
+{
+  "name": "newrelic_cloudflare",
+  "version": "1.0.0",
+  "description": "Cloudflare Plugin for Newrelic Fetches metrics from Cloudflare and aggregates the data",
+  "main": "cloudflare_monitor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mobilenations/newrelic_cloudflare.git"
+  },
+  "keywords": [
+    "newrelic",
+    "plugin",
+    "cloudflare",
+    "railgun"
+  ],
+  "author": "Mobile Nations",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mobilenations/newrelic_cloudflare/issues"
+  },
+  "homepage": "https://github.com/mobilenations/newrelic_cloudflare#readme",
+  "dependencies": {
+    "async": "^3.2.0",
+    "cloudflare4": "^0.2.7",
+    "request": "^2.88.2"
+  }
+}
