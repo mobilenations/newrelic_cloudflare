@@ -1,0 +1,14 @@
+{
+  "cf": {
+    "key": "CF_KEY",
+    "email" : "CF_EMAIL"
+  },
+  "nr_agent": {
+    "host": "NR_HOST",
+    "key": "NR_KEY"
+  },
+  "railgun": [
+    { "ipAddress": "INSTANCE1_IP", "port": 24088, "name": "rg1" },
+    { "ipAddress": "INSTANCE2_IP", "port": 24088, "name": "rg2" }
+  ]
+}

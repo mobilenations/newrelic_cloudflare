@@ -1,88 +1,54 @@
-// Cloudflare
-var cfConfig = {key: 'KEY HERE', email: 'ACCOUNT EMAIL'};
-
-// Local Railgun
-
-var rgConfig = [];
-//rgConfig.push({ ipAddress: 'RG INSTANCE IP', port: 24088, name: 'rg1' });
-//rgConfig.push({ ipAddress: 'RG INSTANCE IP', port: 24088, name: 'rg2' });
-
-
-// NewRelic Plugin Configuration
-var newRelicConfig = {host: 'rocky.mobilenations.com', licenseKey: '***REMOVED***'};
-
-//npm install cloudflare4
-
-//-----------------------------
-// Nothing to configure below
-//-----------------------------
-
-"use strict"
+"use strict";
 
 var async = require('async');
 var request = require('request');
 var util = require('util');
 var CloudFlareAPI = require('cloudflare4');
+let config = require('config');
 
 var cfApi = new CloudFlareAPI({
-  email: cfConfig.email,
-  key: cfConfig.key,
+  email: config.get('cf.email'),
+  key: config.get('cf.key'),
   autoPagination: true,
   autoPaginationConcurrency: 5
 });
 
-// Interal Data
+// Global vars
 var cfData = {};
 cfData['zones'] = {};
 cfData['newData'] = {};
 cfData['summary'] = {};
-
 var parsedMetrics = {};
 
-start();
+start();  // Main entry
 
-// Connect to Pool Masters
 function start() {
 
   // On startup, fetch and post
   getZoneIDs(function () {
-    if (rgConfig.length > 0) {
-      getRailgun();
-    }
+    getRailgun();
     getAnalytics(function () {
       newrelicPost();
-
     });
   });
 
-
-  // Setup intervals.
-  // Every 60 minutes update getZoneIDs
   setInterval(function () {
-    getZoneIDs(function () {
-    });
-  }, (1000 * 60 * 60));
+    getZoneIDs(function () {});  // Every 60 minutes update getZoneIDs
+  }, 1000 * 60 * 60);
 
   // Every minute getXenMetrics, followed by newrelicPost 30s later
   // We execute newrelicPost seperate from getAnalytics
   setInterval(function () {
-
-    if (rgConfig.length > 0) {
-      getRailgun();
-    }
-
-    getAnalytics(function () {
-    });
+    getRailgun();
+    getAnalytics(function () {});
 
     setTimeout(function () {
       newrelicPost();
-    }, (1000 * 30)); //30
-
-  }, (1000 * 60)); //60
-
-
+    }, 1000 * 30); // 30s
+  }, 1000 * 60); // 60s
 }
 
+//////////////////////
 
 function getZoneIDs(callback) {
   console.log("getZoneIDs()");
@@ -280,12 +246,14 @@ function getAnalytics(callback) {
 
 
 function getRailgun() {
+  let railgun =  config.get('railgun');
+  if(railgun.length<=0) return;
 
   cfData['summary_rg'] = [];
   cfData['summary_rg']['bandwidth'] = 0;
   cfData['summary_rg']['requests'] = 0;
 
-  async.each(rgConfig, function (rg, callback) {
+  async.each(config.get('railgun'), function (rg, callback) {
 
     var url = "http://" + rg.ipAddress + ":" + rg.port;
     request({url: url, json: true}, function (err, response, dataset) {
@@ -340,7 +308,6 @@ function getRailgun() {
 
 }
 
-
 function newrelicPost() {
   console.log("newrelicPost()");
 
@@ -348,7 +315,7 @@ function newrelicPost() {
   data['agent'] = {};
   data['components'] = [];
 
-  data['agent']['host'] = newRelicConfig.host;
+  data['agent']['host'] = config.get('nr_agent.host');
   data['agent']['version'] = '1.0.1';
 
   var component = {};
@@ -358,14 +325,14 @@ function newrelicPost() {
   component.metrics = parsedMetrics;
   data['components'].push(component);
 
-  //console.log(util.inspect(data, false, null));
+//  console.log(util.inspect(data, false, null));
 
   request({
     url: 'https://platform-api.newrelic.com/platform/v1/metrics',
     method: 'POST',
     json: data,
     headers: {
-      'X-License-Key': newRelicConfig.licenseKey,
+      'X-License-Key': config.get('nr_agent.key'),
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     },
